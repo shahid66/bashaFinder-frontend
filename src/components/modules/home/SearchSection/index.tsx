@@ -19,7 +19,7 @@ export default function SearchForm({ title }: { title: string }) {
 
   const searchParams = useSearchParams();
   const hasAnyFilter =
-    searchParams.has("location") ||
+    searchParams.has("searchTerm") ||
     searchParams.has("minPrice") ||
     searchParams.has("maxPrice") ||
     searchParams.has("category");

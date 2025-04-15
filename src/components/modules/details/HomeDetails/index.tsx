@@ -1,6 +1,7 @@
 "use client";
+import { requestSchema } from "@/app/(WithCommonLayout)/rental/[rentalId]/requestValidation";
 import { Button } from "@/components/ui/button";
-import NMContainer from "@/components/ui/core/BFContainer";
+import BFContainer from "@/components/ui/core/BFContainer";
 import {
   Form,
   FormControl,
@@ -9,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/context/UserContext";
@@ -38,6 +40,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
   const { user } = useUser();
   const [showImg, setShowImg] = useState(house?.images[0]);
   const form = useForm({
+    resolver: zodResolver(requestSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -75,6 +78,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
           toast.success(res.message);
 
           reset();
+          router.push(`/tenant/request`);
         } else {
           toast.error(res.message);
         }
@@ -84,7 +88,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
     }
   };
   return (
-    <NMContainer>
+    <BFContainer>
       <div className=" mx-auto p-6 grid md:grid-cols-3 gap-6">
         <div className="col-1 md:col-span-2">
           <Image
@@ -151,6 +155,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
                 <FormField
                   control={form.control}
                   name="message"
+                  
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Messages</FormLabel>
@@ -167,17 +172,19 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
                 />
               </div>
 
-              <Button
-                type="submit"
-                className="mt-5 w-full"
-                disabled={isSubmitting}
-              >
-                {user
-                  ? isSubmitting
-                    ? "Requesting..."
-                    : "Send Request"
-                  : "Login First"}
-              </Button>
+              {user?.role === "tenant" && (
+                <Button
+                  type="submit"
+                  className="mt-5 w-full"
+                  disabled={isSubmitting}
+                >
+                  {user
+                    ? isSubmitting
+                      ? "Requesting..."
+                      : "Send Request"
+                    : "Login First"}
+                </Button>
+              )}
             </form>
           </Form>
         </div>
@@ -198,7 +205,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
         <p>Bedrooms: {house?.nof_bedroom}</p>
         <p>Address: {house?.details}</p>
       </div>
-    </NMContainer>
+    </BFContainer>
   );
 };
 

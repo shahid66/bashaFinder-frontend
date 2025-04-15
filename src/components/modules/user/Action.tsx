@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import DeleteConfirmationModal from "@/components/ui/core/BFModal/DeleteConfirmationModal";
+import ViewUserModal from "@/components/ui/core/BFModal/ViewUserModel";
 import {
   Dialog,
   DialogContent,
@@ -13,13 +15,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateUserRole } from "@/services/admin";
+import { deleteUsers, updateUserRole } from "@/services/admin";
+import { IUser } from "@/types/user";
+import { Eye, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const ActionStatus = ({ row }: { row: any }) => {
   const [open, setOpen] = useState(false); // Modal state
   const [role, setRole] = useState(row.original.role); // Status state
+  const [isViewModalOpen, setViewModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+
+  const handleDelete = (data: IUser) => {
+    setSelectedId(data?._id);
+    // setSelectedItem(data?.location);
+    setModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      if (selectedId) {
+        const res = await deleteUsers(selectedId);
+        console.log(res);
+        if (res.success) {
+          toast.success(res.message);
+          setModalOpen(false);
+        } else {
+          toast.error(res.message);
+        }
+      }
+    } catch (err: any) {
+      console.error(err?.message);
+    }
+  };
+
+  const handleView = (event: React.MouseEvent, user: IUser) => {
+    event.preventDefault();
+    openTableModal();
+    setSelectedUser(user);
+    setViewModalOpen(true);
+  };
+  // Function to save current scroll position of the table
+  const openTableModal = () => {
+    setViewModalOpen(true);
+  };
+
+  // Function to restore the scroll position after closing the modal
+  const closeModal = () => {
+    setViewModalOpen(false);
+  };
 
   const handleStatusChange = async (newStatus: string) => {
     setRole(newStatus);
@@ -69,6 +116,33 @@ const ActionStatus = ({ row }: { row: any }) => {
           </Button>
         </DialogContent>
       </Dialog>
+      <button
+        className="text-gray-500 hover:text-blue-500"
+        title="View"
+        onClick={(event) => handleView(event, row.original)}
+      >
+        <Eye className="w-5 h-5" />
+      </button>
+      <button
+        className="text-gray-500 hover:text-red-500"
+        title="Delete"
+        onClick={() => handleDelete(row.original)}
+      >
+        <Trash className="w-5 h-5" />
+      </button>
+
+      <DeleteConfirmationModal
+        name="User"
+        isOpen={isModalOpen}
+        onOpenChange={setModalOpen}
+        onConfirm={handleDeleteConfirm}
+      />
+
+      <ViewUserModal
+        isOpen={isViewModalOpen} // Open view modal state
+        onClose={closeModal} // Close the modal and restore the scroll
+        user={selectedUser} // Pass the selected listing
+      />
     </div>
   );
 };

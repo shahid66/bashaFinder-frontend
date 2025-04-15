@@ -7,6 +7,23 @@ import Image from "next/image";
 import ActionCell from "./ActionCell";
 
 const ManageListingRequests = ({ products }: { products: RentalRequest[] }) => {
+
+  const getRowClass = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "bg-yellow-100"; // Yellow for Pending
+      case "Approved":
+        return "bg-green-100"; // Green for Approved
+      case "Rejected":
+        return "bg-red-100"; // Red for Rejected
+      case "Completed":
+        return "bg-blue-100"; // Blue for Completed
+      default:
+        return "bg-gray-100"; // Default gray
+    }
+  };
+
+
   const columns: ColumnDef<RentalRequest>[] = [
     {
       accessorKey: "images",
@@ -51,7 +68,7 @@ const ManageListingRequests = ({ products }: { products: RentalRequest[] }) => {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Manage Request</h1>
       </div>
-      <BFTable columns={columns} data={products || []} />
+      <BFTable columns={columns} data={products || []}  getRowClass={(row) => getRowClass(row.status)}/>
       {/* <TablePagination totalPage={meta?.totalPage} /> */}
     </div>
   );

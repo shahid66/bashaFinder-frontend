@@ -1,8 +1,14 @@
+import ManageListingsAdmin from "@/components/modules/listing/ManageListingAdmin";
+import { getAllListings } from "@/services/admin";
 
-const page = () => {
+const page = async () => {
+  const { data } = await getAllListings();
+
   return (
-    <div>page</div>
-  )
-}
+    <div>
+      <ManageListingsAdmin products={data?.result} meta={data?.meta} />
+    </div>
+  );
+};
 
-export default page
+export default page;

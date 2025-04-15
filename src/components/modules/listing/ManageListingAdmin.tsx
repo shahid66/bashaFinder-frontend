@@ -2,8 +2,7 @@
 
 import { BFTable } from "@/components/ui/core/BFTable/index";
 
-import { Button } from "@/components/ui/button";
-import { Edit, Eye, Plus, Trash } from "lucide-react";
+import { Edit, Eye, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import DeleteConfirmationModal from "@/components/ui/core/BFModal/DeleteConfirmationModal";
@@ -17,7 +16,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-const ManageListings = ({
+const ManageListingsAdmin = ({
   products,
   meta,
 }: {
@@ -138,7 +137,7 @@ const ManageListings = ({
             title="Edit"
             onClick={() =>
               router.push(
-                `/landlord/listing/update-listing/${row.original._id}`
+                `/admin/listing/update-listing/${row.original._id}`
               )
             }
           >
@@ -161,14 +160,7 @@ const ManageListings = ({
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Manage Listings</h1>
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => router.push("/landlord/listing/add-listing")}
-            size="sm"
-          >
-            Add Listing <Plus />
-          </Button>
-        </div>
+
       </div>
       <BFTable columns={columns} data={products || []} />
       <TablePagination totalPage={meta?.totalPage} />
@@ -189,4 +181,4 @@ const ManageListings = ({
   );
 };
 
-export default ManageListings;
+export default ManageListingsAdmin;

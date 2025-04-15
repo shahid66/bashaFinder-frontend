@@ -49,7 +49,7 @@ const Home = async () => {
         <div className="my-8 flex items-center justify-center">
           <Link
             className="bg-slate-700 rounded-2xl text-white hover:bg-green-400 px-6 py-4"
-            href="/rent"
+            href="/rental"
           >
             All Appartment
           </Link>

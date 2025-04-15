@@ -81,7 +81,7 @@ export default function FilterSection() {
         </label>
         <Select value={category} onValueChange={setCategory}>
           <SelectTrigger className="w-full bg-white">
-            <SelectValue placeholder="Apartments" />
+            <SelectValue placeholder="SELECT CATEGORY" />
           </SelectTrigger>
           <SelectContent>
             {Category.map((item) => (

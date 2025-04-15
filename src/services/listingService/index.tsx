@@ -39,8 +39,8 @@ export const getAllListings = async (
     params.append("category", query?.category.toString());
   }
 
-  if (query?.location) {
-    params.append("location", query?.location.toString());
+  if (query?.searchTerm) {
+    params.append("searchTerm", query?.searchTerm.toString());
   }
 
   try {
@@ -159,6 +159,26 @@ export const getAllRequestByOwner = async () => {
     return data;
   } catch (error: any) {
     return Error(error.message);
+  }
+};
+
+export const getRequestCount = async (): Promise<any> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/landlords/listings/count`,
+      {
+        headers: {
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+        next: {
+          tags: ["USER"],
+        },
+      }
+    );
+
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
   }
 };
 

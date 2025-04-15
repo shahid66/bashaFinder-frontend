@@ -42,12 +42,33 @@ export const getAllRequest = async () => {
     return Error(error.message);
   }
 };
-export const paymentRequest = async (id:string) => {
+export const paymentRequest = async (id: string) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_API}/tenants/payment/${id}`,
       {
         method: "PUT",
+        headers: {
+          authorization: (await cookies()).get("accessToken")!.value,
+        },
+        next: {
+          tags: ["REQUEST"],
+        },
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
+};
+export const paymentVerify = async (id: string) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/tenants/verify?order_id=${id}`,
+      {
+        method: "GET",
+
         headers: {
           authorization: (await cookies()).get("accessToken")!.value,
         },

@@ -1,14 +1,14 @@
-import { Bot, HousePlus, LayoutDashboard, Send,User } from "lucide-react";
+import { Bot, HousePlus, LayoutDashboard, Send, User } from "lucide-react";
 
 export const protectedRoutes = [
-  "/login",
-  
+
+
   "/admin",
   "/admin/:page",
-  "/landlords",
-  "/landlords/:page",
-  "/tenants",
-  "/tenants/:page",
+  "/landlord",
+  "/landlord/:page",
+  "/tenant",
+  "/tenant/:page",
 ];
 
 export const tenantRoutes = [
@@ -91,17 +91,7 @@ export const adminRoutes = [
       },
     ],
   },
-  {
-    title: "Request",
-    url: "/admin/request",
-    icon: Send,
-    items: [
-      {
-        title: "Manage Request",
-        url: "/admin/request",
-      },
-    ],
-  },
+
   {
     title: "User",
     url: "/admin/user",

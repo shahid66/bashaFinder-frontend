@@ -19,15 +19,18 @@ import {
 interface BFTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  getRowClass?: (row: TData) => string;
 }
 
 export function BFTable<TData, TValue>({
   columns,
   data,
+  getRowClass,
 }: BFTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
+    
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -40,6 +43,7 @@ export function BFTable<TData, TValue>({
           {table?.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-gray-200">
               {headerGroup.headers.map((header) => {
+               
                 return (
                   <TableHead
                     className="font-bold text-gray-600"
@@ -59,18 +63,24 @@ export function BFTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell className="py-4" key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              // Get row class using getRowClass if provided
+              const rowClass = getRowClass ? getRowClass(row.original) : "";
+
+              return (
+                <TableRow
+                  key={row.id}
+                  className={rowClass} // Apply the dynamic row class
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell className="py-4" key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">

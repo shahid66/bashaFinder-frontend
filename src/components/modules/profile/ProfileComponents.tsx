@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 const ProfileComponents = ({ userData }: { userData: IUser }) => {
-  console.log(userData);
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <div className="flex flex-col items-center">
@@ -23,6 +22,12 @@ const ProfileComponents = ({ userData }: { userData: IUser }) => {
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Edit Profile
+        </Link>
+        <Link
+          href={`/change-password`}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Change Password
         </Link>
       </div>
     </div>

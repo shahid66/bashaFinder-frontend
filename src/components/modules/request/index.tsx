@@ -10,6 +10,7 @@ import { RentalRequest } from "@/types/request";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 
+type PaymentStatus = "Pending" | "Completed" | "Failed" | "Approved" | "paid";
 const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
   const router = useRouter();
 
@@ -21,7 +22,7 @@ const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
         router.push(res.data);
       }
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -73,9 +74,10 @@ const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
       header: "Action",
       cell: ({ row }) => {
         const status = row.original.status;
+        const paymentStatus: PaymentStatus = "paid";
         return (
           <div className="flex items-center space-x-3">
-            {status === "Approved" ? (
+            {status === "Approved" && paymentStatus !== "paid" && (
               <button
                 className="text-gray-500 hover:text-blue-500 flex gap-2"
                 title="Payment"
@@ -83,9 +85,15 @@ const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
               >
                 <Receipt className="w-5 h-5" /> Payment
               </button>
-            ) : (
-              "Need To Approved"
             )}
+            {status === "Approved" &&
+              paymentStatus === "paid" ?(
+                <>
+                Rent SuccessFul
+                </>
+              ):<>Need To Approved First</>
+             
+            }
           </div>
         );
       },

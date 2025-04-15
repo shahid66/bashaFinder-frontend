@@ -10,7 +10,9 @@ const AllListingPage = async ({
   searchParams: SearchParams;
 }) => {
   const query = await searchParams;
+  console.log(query);
   const { data } = await getAllListings(undefined, undefined, query);
+  console.log(data?.result);
   return (
     <>
       <div className="w-full bg-gradient-to-r from-green-700 to-blue-900 text-white text-center py-10">
@@ -25,11 +27,9 @@ const AllListingPage = async ({
           </div>
           <div className="col-span-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {data?.result?.map(
-                ({ house, index }: { house: House; index: number }) => (
-                  <ApartmentCard key={index} house={house} />
-                )
-              )}
+              {data?.result?.map((house: House) => (
+                <ApartmentCard key={house?._id} house={house} />
+              ))}
             </div>
           </div>
         </div>

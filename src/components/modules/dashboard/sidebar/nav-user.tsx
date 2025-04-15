@@ -23,17 +23,19 @@ import { usePathname, useRouter } from "next/navigation";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user, setIsLoading } = useUser();
+  const { user, setUser, setIsLoading } = useUser();
 
   const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = () => {
     logout();
+    setUser(null);
     setIsLoading(true);
 
     if (protectedRoutes.some((route) => pathname.match(route))) {
       router.push("/");
+
       setIsLoading(false);
     }
   };
