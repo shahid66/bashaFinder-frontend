@@ -11,7 +11,7 @@ export default async function TenantDashboard() {
   const { data } = await getAllRequest();
 
   const getMonthlyCounts = (data: IRequestRent[]): UserCountByMonth[] => {
-    const grouped = data.reduce(
+    const grouped = data?.reduce(
       (acc: Record<string, UserCountByMonth>, item) => {
         const date = new Date(item.createdAt);
         const year = date.getFullYear();
@@ -30,8 +30,6 @@ export default async function TenantDashboard() {
 
     return Object.values(grouped);
   };
-
-  console.log(getMonthlyCounts(data));
 
   if (!data) return null;
   const approvedTotal =

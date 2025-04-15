@@ -26,7 +26,7 @@ export const addRequest = async (sendRequest: any): Promise<any> => {
 export const getAllRequest = async () => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/tenants/requestsByUser`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/tenants/requests-ByUser`,
       {
         headers: {
           authorization: (await cookies()).get("accessToken")!.value,
