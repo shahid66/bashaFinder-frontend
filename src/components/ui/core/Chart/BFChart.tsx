@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import dynamic from "next/dynamic";
 
 // Register necessary chart components
 ChartJS.register(
@@ -34,6 +34,11 @@ type BFChartProps = {
   title: string;
   serverData: UserCountByMonth[];
 };
+
+const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
+  ssr: false,
+});
+
 
 const BFChart = ({ title, serverData }: BFChartProps) => {
   // Chart data

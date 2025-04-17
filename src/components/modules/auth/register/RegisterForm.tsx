@@ -16,10 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useUser } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
-import { registerSchema } from "./registerValidation";
-import { toast } from "sonner";
 import { registerUser } from "@/services/AuthService";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { registerSchema } from "./registerValidation";
 
 export default function RegisterForm() {
   const form = useForm({
@@ -41,7 +41,6 @@ export default function RegisterForm() {
   const { setIsLoading } = useUser();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
- 
     try {
       const res = await registerUser(data);
       setIsLoading(true);
@@ -128,12 +127,16 @@ export default function RegisterForm() {
           />
           <FormField
             control={form.control}
-            name="role"  // Ensure the field name matches the name in form.watch()
+            name="role"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Role</FormLabel>
                 <FormControl>
-                  <RadioGroup {...field} className="my-4 flex gap-4">
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    className="my-4 flex gap-4"
+                  >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="tenant" id="r1" />
                       <Label htmlFor="r1">Tenant</Label>
@@ -148,6 +151,7 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
+
           <Button
             // disabled={!!passwordConfirm && password !== passwordConfirm}
             type="submit"

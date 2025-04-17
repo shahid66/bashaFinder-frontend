@@ -1,5 +1,6 @@
 "use client";
 
+import { rentalFormSchema } from "@/app/(WithDashboardLayout)/landlord/listing/add-listing/listingValidation";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,6 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Category } from "@/constants";
 import { addListing } from "@/services/listingService";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,6 +30,7 @@ export default function AddListingForm() {
   const [imageUrls, setImageUrls] = useState<string[]>(["", "", "", ""]);
 
   const form = useForm({
+    resolver: zodResolver(rentalFormSchema),
     defaultValues: {
       location: "",
       details: "",
@@ -44,7 +47,9 @@ export default function AddListingForm() {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     // Clean up the image URLs if they contain extra quotes
-const cleanImageUrls = imageUrls.map((url) => url.replace(/^['"]+|['"]+$/g, ''));
+    const cleanImageUrls = imageUrls.map((url) =>
+      url.replace(/^['"]+|['"]+$/g, "")
+    );
     const payload = {
       location: data.location,
       details: data.details,
@@ -90,6 +95,7 @@ const cleanImageUrls = imageUrls.map((url) => url.replace(/^['"]+|['"]+$/g, ''))
             <FormField
               control={form.control}
               name="location"
+             
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
@@ -194,6 +200,7 @@ const cleanImageUrls = imageUrls.map((url) => url.replace(/^['"]+|['"]+$/g, ''))
                     }
                     className="p-2 border border-gray-300 rounded"
                     placeholder={`Enter image ${index + 1} URL`}
+                    required
                   />
                 </div>
               ))}

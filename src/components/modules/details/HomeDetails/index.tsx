@@ -10,11 +10,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/context/UserContext";
 import { addRequest } from "@/services/RequestService";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -155,7 +155,6 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
                 <FormField
                   control={form.control}
                   name="message"
-                  
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Messages</FormLabel>
@@ -172,7 +171,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
                 />
               </div>
 
-              {user?.role === "tenant" && (
+              {user !== null && user?.role === "tenant" ? (
                 <Button
                   type="submit"
                   className="mt-5 w-full"
@@ -183,6 +182,10 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
                       ? "Requesting..."
                       : "Send Request"
                     : "Login First"}
+                </Button>
+              ) : (
+                <Button type="submit" className="mt-5 w-full">
+                  Login First
                 </Button>
               )}
             </form>

@@ -2,16 +2,16 @@
 "use client";
 
 import {
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Title,
-    Tooltip,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import dynamic from "next/dynamic";
 
 // Register necessary chart components
 ChartJS.register(
@@ -34,11 +34,14 @@ type BFChartProps = {
   title: string;
   serverData: UserCountByMonth[];
 };
+const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
+  ssr: false,
+});
 
 const BFChartForAdmin = ({ title, serverData }: BFChartProps) => {
   // Chart data
   // const data = {
-  //   labels: [ "January", "February", "March", "April", "May", "June", 
+  //   labels: [ "January", "February", "March", "April", "May", "June",
   //       "July", "August", "September", "October", "November", "December"],
   //   datasets: [
   //     {
@@ -52,16 +55,26 @@ const BFChartForAdmin = ({ title, serverData }: BFChartProps) => {
   // };
 
   const mongoData = serverData || [];
-  
+
   const labels = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
-  
+
   const tenantData = new Array(12).fill(0);
   const landlordData = new Array(12).fill(0);
-  
-  mongoData.forEach(entry => {
+
+  mongoData.forEach((entry) => {
     const index = entry.month - 1; // month is 1-indexed
     if (entry.role === "tenant") {
       tenantData[index] = entry.count;
@@ -69,7 +82,7 @@ const BFChartForAdmin = ({ title, serverData }: BFChartProps) => {
       landlordData[index] = entry.count;
     }
   });
-  
+
   const data = {
     labels,
     datasets: [
@@ -84,8 +97,8 @@ const BFChartForAdmin = ({ title, serverData }: BFChartProps) => {
         data: landlordData,
         borderColor: "rgb(255, 99, 132)",
         tension: 0.1,
-      }
-    ]
+      },
+    ],
   };
 
   // Chart options

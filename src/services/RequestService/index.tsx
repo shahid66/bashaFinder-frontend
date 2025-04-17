@@ -43,6 +43,7 @@ export const getAllRequest = async () => {
   }
 };
 export const paymentRequest = async (id: string) => {
+  console.log(id, "sfsdfsadf");
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_API}/tenants/payment/${id}`,

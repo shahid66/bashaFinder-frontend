@@ -9,16 +9,23 @@ import { paymentRequest } from "@/services/RequestService";
 import { RentalRequest } from "@/types/request";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { toast } from "sonner";
 
 type PaymentStatus = "Pending" | "Completed" | "Failed" | "Approved" | "paid";
 const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
   const router = useRouter();
 
   const handlePayment = async (id: any) => {
-    console.log(id);
     try {
       const res = await paymentRequest(id);
+      if (res?.data?.status === false) {
+        toast.error(res?.data?.message);
+      }
+
+      console.log(res?.data?.message);
+
       if (res.success) {
+        console.log(res);
         router.push(res.data);
       }
     } catch (error: any) {
@@ -74,10 +81,10 @@ const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
       header: "Action",
       cell: ({ row }) => {
         const status = row.original.status;
-        const paymentStatus: PaymentStatus = "paid";
+        const PaymentStatus = row.original.paymentStatus;
         return (
           <div className="flex items-center space-x-3">
-            {status === "Approved" && paymentStatus !== "paid" && (
+            {status === "Approved" && PaymentStatus !== "Paid" ? (
               <button
                 className="text-gray-500 hover:text-blue-500 flex gap-2"
                 title="Payment"
@@ -85,15 +92,11 @@ const ManageRequests = ({ products }: { products: RentalRequest[] }) => {
               >
                 <Receipt className="w-5 h-5" /> Payment
               </button>
+            ) : status === "Approved" && PaymentStatus === "Paid" ? (
+              <>Rent SuccessFul</>
+            ) : (
+              <>Need To Approved First</>
             )}
-            {status === "Approved" &&
-              paymentStatus === "paid" ?(
-                <>
-                Rent SuccessFul
-                </>
-              ):<>Need To Approved First</>
-             
-            }
           </div>
         );
       },

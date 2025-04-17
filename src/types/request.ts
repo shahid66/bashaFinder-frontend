@@ -15,7 +15,7 @@ export type RentalRequest = {
   landlord: string;
   landlordPhone: string;
   message: string;
-  paymentStatus: "Pending" | "Completed" | "Failed"; // Enum-like type for better safety
+  paymentStatus: "Pending" | "Completed" | "Failed" | "Paid"; // Enum-like type for better safety
   phone: string;
   rentalHouse: RentalHouse;
   status: "Pending" | "Approved" | "Rejected"; // Adjust based on possible values
