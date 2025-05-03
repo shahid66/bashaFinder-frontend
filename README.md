@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 BasaFinder - Rental Housing Platform
 
-## Getting Started
+**BasaFinder** is a full-featured rental housing web application built with a user-centric focus to simplify the rental process for tenants, landlords, and administrators. It allows users to find, list, and manage rental properties efficiently with role-based access control and a smooth UI/UX experience.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://basfinder-frontend.vercel.app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Features
 
-## Learn More
+### ✅ Public Pages
 
-To learn more about Next.js, take a look at the following resources:
+- **Home / Landing Page**
+  - Logo and Navigation Bar
+  - Hero Section with catchy headline and CTA button
+  - Rental house search (location, price, bedrooms)
+  - Rental house cards with view details
+  - Testimonials and Rental Tips section
+  - Footer with contact and legal links
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **About Us**
+  - Mission Statement
+  - Team Info
+  - Contact Information
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Other Public Pages**
+  - FAQ
+  - Terms of Use
+  - Privacy Policy
+  - News
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔒 Authentication & Authorization
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- JWT-based secure login & registration
+- Role-based Access Control:
+  - **Admin**
+  - **Landlord**
+  - **Tenant**
+
+---
+
+
+
+### 🛠️ Admin
+
+- View, edit, delete any user or rental listing
+- Activate/deactivate users
+- Full dashboard access for user and listing management
+
+### 🏘️ Landlord
+
+- Add/Edit/Delete rental listings
+- View and respond to rental requests
+- Approve/reject rental requests
+- Provide contact info after approval
+- Initiate payment request
+##### Creadiential 
+  - email: landlord@gmail.com
+  - password: 1111
+
+### 👨‍💼 Tenant
+
+- Search rental houses
+- Submit rental requests with custom message
+- Track request status (Pending/Approved/Rejected)
+- Make payments upon approval
+- View landlord contact upon approval
+
+---
+
+## 📋 Core Pages & Components
+
+### 🔹 Home Page
+
+- Navigation: Home, About, Listings, Dashboard, Login/Register, My Profile
+- Hero section with CTA: "Post Rental House Info"
+- Search bar (Location, Price, Bedrooms)
+- Cards with property preview
+- Testimonials and Tips
+- Footer with contact and legal info
+
+### 🔹 Login & Register
+
+- Login: Email/Username, Password
+- Register: Username, Email, Password, Confirm Password, Role (Landlord/Tenant)
+
+### 🔹 Dashboard (Private Routes)
+
+- Admin: User & listing management
+- Landlord: Manage listings and rental requests
+- Tenant: Track rental requests and payment status
+
+### 🔹 Post Rental House (Landlord Only)
+
+- Fields: Location, Description, Rent, Bedrooms, Images, Amenities
+
+### 🔹 Rental House Details
+
+- Show all property info
+- Request Rental button (opens modal for tenant to input details)
+
+### 🔹 Rental House Request (Tenant Only)
+
+- Auto-filled contact info
+- Custom message field
+- Terms & Conditions checkbox
+- Submit to notify landlord
+
+### 🔹 Owner Response Workflow
+
+- Landlord approves/rejects requests
+- Approved: Tenant sees payment option + contact number
+- Rejected: Status updated
+
+### 🔹 Profile Management
+
+- Edit profile info
+- Change password (Current, New, Confirm New)
+
+---
+
+## 🧱 Tech Stack
+
+- **Frontend**: Next.js 14, Tailwind CSS, Framer Motion, ShadCN UI
+- **Authentication**: Custom JWT-based
+- **State Management**: Redux Toolkit (optional)
+- **Routing**: Public & Protected Routes via Next.js middleware
+
+---
+
+## 📱 UI/UX Design
+
+- Mobile-first, responsive design
+- Clean and user-friendly layout
+- Intuitive navigation and feedback
+
+---
+
+## 🛡️ Access Control & Route Protection
+
+| Page                         | Access            |
+|------------------------------|-------------------|
+| Home / About / FAQ           | Public            |
+| Login / Register             | Public            |
+| Dashboard (Admin)            | Admin Only        |
+| Dashboard (Landlord)         | Landlord Only     |
+| Dashboard (Tenant)           | Tenant Only       |
+| Add Rental House             | Landlord Only     |
+| Request Rental Page          | Tenant Only       |
+| Rental House Details         | Authenticated Only|
+
+---
+
+## 📧 Contact
+
+For support or inquiries:
+
+- 📧 Email: kk.shahid66@gmail.com
+- 📞 Phone: +8801736631284
+
+
+---
+
+## 📄 License
+
+© 2025 BasaFinder. All rights reserved.
+
+
+
+---
+
