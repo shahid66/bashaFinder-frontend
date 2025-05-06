@@ -2,6 +2,8 @@
 
 import { rentalFormSchema } from "@/app/(WithDashboardLayout)/landlord/listing/add-listing/listingValidation";
 import { Button } from "@/components/ui/button";
+import BFImageUploader from "@/components/ui/core/BFImageUploader";
+import ImagePreviewer from "@/components/ui/core/BFImageUploader/ImagePreviewer";
 import {
   Form,
   FormControl,
@@ -27,11 +29,13 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function AddListingForm() {
-  const [imageUrls, setImageUrls] = useState<string[]>(["", "", "", ""]);
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
 
   const form = useForm({
     resolver: zodResolver(rentalFormSchema),
     defaultValues: {
+      name: "",
       location: "",
       details: "",
       rent_amount: "",
@@ -46,17 +50,28 @@ export default function AddListingForm() {
   } = form;
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    // Clean up the image URLs if they contain extra quotes
-    const cleanImageUrls = imageUrls.map((url) =>
-      url.replace(/^['"]+|['"]+$/g, "")
-    );
+    const formData = new FormData();
+    imageFiles.forEach((file) => formData.append("images", file));
+
+    const uploadRes = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const uploadData = await uploadRes.json();
+
+    if (!uploadData.success) {
+      toast.error("Image upload failed");
+      return;
+    }
     const payload = {
+      name: data.name,
       location: data.location,
       details: data.details,
       rent_amount: data.rent_amount,
       nof_bedroom: data.nof_bedroom,
       category: data.category,
-      images: cleanImageUrls, // Just send the array of image URLs directly
+      images: uploadData.urls, // Just send the array of image URLs directly
     };
 
     try {
@@ -64,20 +79,15 @@ export default function AddListingForm() {
       console.log(res);
       if (res.success) {
         toast.success(res.message);
+        setImageFiles([]);
+        setImagePreview([]);
         reset();
-        setImageUrls(["", "", "", ""]);
       } else {
         toast.error(res.message);
       }
     } catch (err: any) {
       console.error(err);
     }
-  };
-
-  const handleImageUrlChange = (index: number, value: string) => {
-    const newImageUrls = [...imageUrls];
-    newImageUrls[index] = value;
-    setImageUrls(newImageUrls);
   };
 
   return (
@@ -94,8 +104,20 @@ export default function AddListingForm() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Apartment Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="location"
-             
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
@@ -180,32 +202,20 @@ export default function AddListingForm() {
               )}
             />
           </div>
-
-          <div>
-            <div className="flex justify-between items-center border-t border-b py-3 my-5">
-              <p className="text-primary font-bold text-xl">Images (URLs)</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {imageUrls.map((url, index) => (
-                <div key={index} className="flex flex-col">
-                  <label htmlFor={`imageUrl${index}`} className="mb-2">
-                    Image {index + 1} URL
-                  </label>
-                  <input
-                    id={`imageUrl${index}`}
-                    type="text"
-                    value={url}
-                    onChange={(e) =>
-                      handleImageUrlChange(index, e.target.value)
-                    }
-                    className="p-2 border border-gray-300 rounded"
-                    placeholder={`Enter image ${index + 1} URL`}
-                    required
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          {imagePreview.length !== 4 && (
+            <BFImageUploader
+              setImageFiles={setImageFiles}
+              setImagePreview={setImagePreview}
+              label="Upload Image"
+              className="w-fit mt-0"
+            />
+          )}
+          <ImagePreviewer
+            className="flex flex-wrap gap-4"
+            setImageFiles={setImageFiles}
+            imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
+          />
 
           <Button type="submit" className="mt-5 w-full" disabled={isSubmitting}>
             {isSubmitting ? "Adding Listing....." : "Add Listing"}

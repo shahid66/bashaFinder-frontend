@@ -42,6 +42,32 @@ export const getAllRequest = async () => {
     return Error(error.message);
   }
 };
+export const getSingleRequestByUser = async ({
+  id,
+  postId,
+}: {
+  id: string;
+  postId: string;
+}) => {
+  try {
+    
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/tenants/requests/${id}/${postId}`,
+      {
+        headers: {
+          authorization: (await cookies()).get("accessToken")!.value,
+        },
+        next: {
+          tags: ["REQUEST"],
+        },
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
+};
 export const paymentRequest = async (id: string) => {
   console.log(id, "sfsdfsadf");
   try {

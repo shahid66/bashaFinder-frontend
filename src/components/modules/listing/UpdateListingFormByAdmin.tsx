@@ -1,26 +1,45 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Category } from "@/constants";
-import { updateListing } from "@/services/listingService";
+import { updateListingByAdmin } from "@/services/admin";
 import { IListing } from "@/types/listing";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { updateListingByAdmin } from "@/services/admin";
 
-export default function UpdateListingFormByAdmin({ listing }: { listing: IListing }) {
-  const [imageUrls, setImageUrls] = useState<string[]>(listing?.images || ["", "", "", ""]);
+export default function UpdateListingFormByAdmin({
+  listing,
+}: {
+  listing: IListing;
+}) {
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    listing?.images || ["", "", "", ""]
+  );
 
   const router = useRouter();
 
   const form = useForm({
     defaultValues: {
+      name: listing?.name || "",
       location: listing?.location || "",
       details: listing?.details || "",
       rent_amount: listing?.rent_amount || "",
@@ -44,6 +63,7 @@ export default function UpdateListingFormByAdmin({ listing }: { listing: IListin
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     // Form data to send to backend
     const payload = {
+      name: data.name,
       location: data.location,
       details: data.details,
       rent_amount: data.rent_amount,
@@ -81,6 +101,19 @@ export default function UpdateListingFormByAdmin({ listing }: { listing: IListin
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Apartment Name </FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="location"
               render={({ field }) => (
                 <FormItem>
@@ -111,7 +144,10 @@ export default function UpdateListingFormByAdmin({ listing }: { listing: IListin
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select House Category" />
@@ -175,7 +211,9 @@ export default function UpdateListingFormByAdmin({ listing }: { listing: IListin
                   <FormControl>
                     <Input
                       value={url}
-                      onChange={(e) => handleImageUrlChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handleImageUrlChange(index, e.target.value)
+                      }
                       placeholder={`Enter image URL ${index + 1}`}
                     />
                   </FormControl>

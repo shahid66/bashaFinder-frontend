@@ -106,7 +106,7 @@ const ManageListings = ({
     {
       accessorKey: "details",
       header: "Details",
-      cell: ({ row }) => <span>{row.original.details}</span>,
+      cell: ({ row }) => <span>{row.original.details.slice(0, 30)}...</span>,
     },
     {
       accessorKey: "category",

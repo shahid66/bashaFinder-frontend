@@ -39,10 +39,9 @@ const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
   ssr: false,
 });
 
-
 const BFChart = ({ title, serverData }: BFChartProps) => {
   // Chart data
-
+  console.log(serverData);
   const labels = [
     "January",
     "February",

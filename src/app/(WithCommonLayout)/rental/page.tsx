@@ -10,7 +10,7 @@ const AllListingPage = async ({
   searchParams: SearchParams;
 }) => {
   const query = await searchParams;
-  console.log(query);
+ 
   const { data } = await getAllListings(undefined, undefined, query);
   console.log(data?.result);
   return (

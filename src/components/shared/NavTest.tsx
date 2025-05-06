@@ -74,6 +74,16 @@ export default function Navbar() {
               About
             </Link>
           </li>
+          <li>
+            <Link
+              href="/contact"
+              className={`hover:text-green-400 ${
+                pathname === "/contact" ? "text-green-400" : ""
+              }`}
+            >
+              Contact Us
+            </Link>
+          </li>
         </ul>
 
         {user?.email ? (
@@ -92,7 +102,7 @@ export default function Navbar() {
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="bg-red-500 cursor-pointer"
+                  className="hover:text-red-500 cursor-pointer"
                   onClick={handleLogOut}
                 >
                   <LogOut />
@@ -144,6 +154,16 @@ export default function Navbar() {
                 href="/about"
                 className={`hover:text-green-400 ${
                   pathname === "/about" ? "text-green-400" : ""
+                }`}
+              >
+                About
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className={`hover:text-green-400 ${
+                  pathname === "/contact" ? "text-green-400" : ""
                 }`}
               >
                 About

@@ -1,5 +1,7 @@
 "use client";
 import { requestSchema } from "@/app/(WithCommonLayout)/rental/[rentalId]/requestValidation";
+import DetailsCards from "@/components/DetailsCards";
+import School from "@/components/School";
 import { Button } from "@/components/ui/button";
 import BFContainer from "@/components/ui/core/BFContainer";
 import {
@@ -20,8 +22,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-interface House {
+export interface House {
   _id: string;
+  name: string;
   location: string;
   images: string[];
   details: string;
@@ -33,8 +36,25 @@ interface House {
     _id: string;
   };
 }
+export interface RequestStatus {
+  _id?: string;
+  user?: string;
+  rentalHouse?: string;
+  landlord?: string;
+  phone?: string;
+  landlordPhone?: null;
+  message?: string;
+  status?: string;
+  paymentStatus?: string;
+}
 
-const RentalHouseDetails = ({ house }: { house: House }) => {
+const RentalHouseDetails = ({
+  house,
+  requestStatus,
+}: {
+  house: House;
+  requestStatus: RequestStatus;
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useUser();
@@ -78,7 +98,7 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
           toast.success(res.message);
 
           reset();
-          router.push(`/tenant/request`);
+          // router.push(`/tenant/request`);
         } else {
           toast.error(res.message);
         }
@@ -107,106 +127,144 @@ const RentalHouseDetails = ({ house }: { house: House }) => {
             ))}
           </div>
         </div>
+        {user !== null && user?.role === "tenant" ? (
+          requestStatus === null ? (
+            <div className="p-4 border rounded-xl shadow-lg max-h-5/6">
+              <h3 className="text-xl font-bold mb-4">Book This Apartment</h3>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="my-5">
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Messages</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className="h-36 resize-none"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-        <div className="p-4 border rounded-xl shadow-lg max-h-5/6">
-          <h3 className="text-xl font-bold mb-4">Book This Apartment</h3>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="my-5">
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Messages</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          className="h-36 resize-none"
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {user !== null && user?.role === "tenant" ? (
-                <Button
-                  type="submit"
-                  className="mt-5 w-full"
-                  disabled={isSubmitting}
-                >
-                  {user
-                    ? isSubmitting
-                      ? "Requesting..."
-                      : "Send Request"
-                    : "Login First"}
-                </Button>
+                  <Button
+                    type="submit"
+                    className="mt-5 w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Requesting..." : "Send Request"}
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          ) : (
+            <div>
+              {requestStatus?.status === "Pending" ? (
+                <div className="p-4  max-h-5/6 bg-sky-100 rounded-xl shadow-lg">
+                  {" "}
+                  <h3>
+                    Status:{" "}
+                    <span className="font-bold"> {requestStatus?.status}</span>
+                  </h3>
+                  <p>
+                    Your Request Status Now Pending.Please wait Landlord review
+                    your request. He Approved or Reject your Request. please
+                    wait...
+                  </p>
+                </div>
+              ) : requestStatus?.status === "cancled" ? (
+                <div className="p-4 border rounded-xl shadow-lg max-h-5/6">
+                  {" "}
+                  <h3>
+                    Status:{" "}
+                    <span className="font-bold text-red-400">
+                      {" "}
+                      {requestStatus?.status}
+                    </span>
+                  </h3>
+                  <p>
+                    Your Request Status Now {requestStatus?.status}. Thank you
+                    for your interest.
+                  </p>
+                </div>
               ) : (
-                <Button type="submit" className="mt-5 w-full">
-                  Login First
-                </Button>
+                <div className="p-4 border rounded-xl shadow-lg max-h-5/6">
+                  {" "}
+                  <h3>
+                    Status:{" "}
+                    <span className="font-bold text-green-300">
+                      {" "}
+                      {requestStatus?.status}
+                    </span>
+                  </h3>
+                  <p>Your Request Status Now {requestStatus?.status}. Thanks</p>
+                </div>
               )}
-            </form>
-          </Form>
+            </div>
+          )
+        ) : (
+          <div>
+            <h3 className="text-xl font-bold mb-4">Book This Apartment</h3>
+            <p className="text-red-500">
+              Please login as a tenant to book this apartment
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-4 mt-6">
+        <div className="w-full">
+          <DetailsCards house={house} />
         </div>
-      </div>
 
-      <h2 className="text-2xl font-bold mt-4">{house?.location}</h2>
-
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold">Price Details:</h3>
-        <p>Rent/Month: ${house?.rent_amount}</p>
-        <p>Service Charge: $100</p>
-        <p>Security Deposit: 2</p>
-      </div>
-      <div className="my-4">
-        <h3 className="text-lg font-semibold">Property Details:</h3>
-
-        <p>Size: {house?.nof_bedroom} square feet</p>
-        <p>Bedrooms: {house?.nof_bedroom}</p>
-        <p>Address: {house?.details}</p>
+        <div className="w-4xl">
+          <School />
+        </div>
       </div>
     </BFContainer>
   );

@@ -1,20 +1,38 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import BFImageUploader from "@/components/ui/core/BFImageUploader";
+import ImagePreviewer from "@/components/ui/core/BFImageUploader/ImagePreviewer";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Category } from "@/constants";
 import { updateListing } from "@/services/listingService";
 import { IListing } from "@/types/listing";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function UpdateListingForm({ listing }: { listing: IListing }) {
-  const [imageUrls, setImageUrls] = useState<string[]>(listing?.images || ["", "", "", ""]);
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>(
+    listing.images || []
+  );
 
   const router = useRouter();
 
@@ -33,22 +51,33 @@ export default function UpdateListingForm({ listing }: { listing: IListing }) {
     reset,
   } = form;
 
-  // Handle changes in the image URLs input
-  const handleImageUrlChange = (index: number, value: string) => {
-    const newImageUrls = [...imageUrls];
-    newImageUrls[index] = value;
-    setImageUrls(newImageUrls);
-  };
-
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    let imageUrls = listing.images || []; // Existing image URLs from the listing
     // Form data to send to backend
+
+    if (imageFiles.length > 0) {
+      const formData = new FormData();
+      imageFiles.forEach((file) => formData.append("images", file));
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const uploadData = await uploadRes.json();
+      imageUrls = uploadData.urls; // Update imageUrls with the new uploaded images
+      if (!uploadData.success) {
+        toast.error("Image upload failed");
+        return;
+      }
+    }
     const payload = {
       location: data.location,
       details: data.details,
       rent_amount: data.rent_amount,
       nof_bedroom: data.nof_bedroom,
       category: data.category,
-      images: imageUrls.filter((url) => url.trim() !== ""), // Only include non-empty URLs
+      images: imageUrls, // Only include non-empty URLs
     };
 
     try {
@@ -110,7 +139,10 @@ export default function UpdateListingForm({ listing }: { listing: IListing }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select House Category" />
@@ -163,26 +195,20 @@ export default function UpdateListingForm({ listing }: { listing: IListing }) {
             />
           </div>
 
-          <div>
-            <div className="flex justify-between items-center border-t border-b py-3 my-5">
-              <p className="text-primary font-bold text-xl">Images</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {imageUrls.map((url, index) => (
-                <FormItem key={index}>
-                  <FormLabel>Image URL {index + 1}</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={url}
-                      onChange={(e) => handleImageUrlChange(index, e.target.value)}
-                      placeholder={`Enter image URL ${index + 1}`}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              ))}
-            </div>
-          </div>
+          {imagePreview.length !== 4 && (
+            <BFImageUploader
+              setImageFiles={setImageFiles}
+              setImagePreview={setImagePreview}
+              label="Upload Image"
+              className="w-fit mt-0"
+            />
+          )}
+          <ImagePreviewer
+            className="flex flex-wrap gap-4"
+            setImageFiles={setImageFiles}
+            imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
+          />
 
           <Button type="submit" className="mt-5 w-full" disabled={isSubmitting}>
             {isSubmitting ? "Updating Listing....." : "Update Listing"}

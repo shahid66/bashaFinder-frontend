@@ -10,6 +10,7 @@ export interface House {
 
 export interface IListing {
   _id: string;
+  name: string;
   location: string;
   details: string;
   rent_amount: number;
@@ -23,7 +24,6 @@ export interface IListing {
 }
 export interface IListingRequest {
   _id: string;
-
 
   createdAt?: string;
   updatedAt?: string;

@@ -20,7 +20,8 @@ export default function EditProfilePage({ userData }: { userData: IUser }) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(userData.image || "");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -29,30 +30,44 @@ export default function EditProfilePage({ userData }: { userData: IUser }) {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files![0];
     if (file) {
-      setSelectedImage(file);
+      setImageFiles((prev) => [...prev, file]);
       const imageUrl = URL.createObjectURL(file);
       setPreviewImage(imageUrl);
     }
   };
 
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
-    setUser({ ...user, imageUrl: url });
-    setPreviewImage(url); // Optional: Update the preview image immediately
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Prepare the data to send to the backend
+let imageProcessUrl=user.imageUrl;
+    if(imageFiles.length>0){
+      const formData = new FormData();
+      imageFiles.forEach((file) => formData.append("images", file));
+
+    const uploadRes = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const uploadData = await uploadRes.json();
+    imageProcessUrl=uploadData.urls[0]; // Assuming the API returns an array of URLs
+    if (!uploadData.success) {
+      toast.error("Image upload failed");
+      return;
+    }
+    
+    }
     const data = {
       name: user.name,
       phone: user.phone,
       address: user.address,
       city: user.city,
-      image: selectedImage ? selectedImage : user.imageUrl, // Use selected image if available, else the URL
+      image: imageFiles ? imageProcessUrl : user.imageUrl, // Use selected image if available, else the URL
     };
 
     try {
@@ -84,19 +99,16 @@ export default function EditProfilePage({ userData }: { userData: IUser }) {
             height={120}
             className="rounded-full w-[120px] h-[120px] border-4 border-gray-300"
           />
-         
         </div>
 
-        {/* Image URL Input */}
+        {/* Image File Upload */}
         <div>
-          <label className="block font-medium">Image URL</label>
+          <label className="block font-medium">Upload Image</label>
           <input
-            type="text"
-            name="imageUrl"
-            value={user.imageUrl}
-            onChange={handleImageUrlChange}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter image URL "
           />
         </div>
 
